@@ -5,6 +5,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { EntityRepository, Repository } from 'typeorm';
+import { CredentialsDto } from '../auth/dto/credentials.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserRole } from './user-roles.enum';
 import { User } from './user.entity';
@@ -34,6 +35,17 @@ export class UserRepository extends Repository<User> {
       }
 
       throw new InternalServerErrorException('Erro ao salvar o usuário no banco de dados');
+    }
+  }
+
+  async checkCredentials(credentialsDto: CredentialsDto): Promise<User> {
+    const { email, password } = credentialsDto;
+    const user = await this.findOne({ email, status: true });
+
+    if (user && (await user.checkPassword(password))) {
+      return user;
+    } else {
+      return null;
     }
   }
 
