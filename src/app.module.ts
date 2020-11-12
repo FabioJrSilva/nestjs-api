@@ -1,9 +1,11 @@
+import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
 import { AuthModule } from './auth/auth.module';
 import { typeOrmConfig } from './configs/ typeorm.config';
+import { mailerConfig } from './configs/mailer.config';
 import { winstonConfig } from './configs/winston.config';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { UsersModule } from './users/users.module';
@@ -12,8 +14,10 @@ import { UsersModule } from './users/users.module';
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
     WinstonModule.forRoot(winstonConfig),
+    MailerModule.forRoot(mailerConfig),
     UsersModule,
     AuthModule,
+
   ],
   controllers: [],
   providers: [

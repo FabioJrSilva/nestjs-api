@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/user.entity';
@@ -23,6 +23,13 @@ export class AuthController {
     : Promise<{ token: string }> {
 
     return await this.authService.signIn(credentiaslsDto);
+  }
+
+  @Patch(':token')
+  async confirmEmail(@Param('token') token: string) {
+    await this.authService.confirmEmail(token);
+
+    return { message: 'Email confirmado!' };
   }
 
   @Get('/me')

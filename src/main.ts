@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import 'dotenv/config';
 import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import { winstonConfig } from './configs/winston.config';
