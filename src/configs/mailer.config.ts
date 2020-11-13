@@ -1,8 +1,7 @@
-import { MailerOptions } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import * as path from 'path';
 
-export const mailerConfig: MailerOptions = {
+export default () => ({
   template: {
     dir: path.resolve(__dirname, '..', '..', 'templates'),
     adapter: new HandlebarsAdapter(),
@@ -19,4 +18,4 @@ export const mailerConfig: MailerOptions = {
       pass: process.env.MAIL_AUTH_PASS
     }
   }
-};
+});

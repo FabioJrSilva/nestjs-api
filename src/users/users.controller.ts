@@ -1,6 +1,6 @@
 import {
   Body, Controller, Delete, ForbiddenException, Get,
-  Param, Patch, Post, Query, UseGuards, ValidationPipe
+  Param, Patch, Post, Query, UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
@@ -21,7 +21,7 @@ export class UsersController {
 
   @Post()
   @Role(UserRole.ADMIN)
-  async createAdminUser(@Body(ValidationPipe) createUserDto: CreateUserDto)
+  async createAdminUser(@Body() createUserDto: CreateUserDto)
     : Promise<ReturnUserDto> {
     const user = await this.usersService.createAdminUser(createUserDto);
 
@@ -44,7 +44,7 @@ export class UsersController {
 
   @Patch(':id')
   async updateUser(
-    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: UpdateUserDto,
     @GetUser() user: User, @Param('id') id: string) {
     if (user.role !== UserRole.ADMIN && user.id.toString() !== id) {
       throw new ForbiddenException(

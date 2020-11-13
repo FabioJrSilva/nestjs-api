@@ -1,12 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import {
-  BaseEntity,
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  Unique,
-  UpdateDateColumn
+  BaseEntity, Column, CreateDateColumn, Entity,
+  PrimaryGeneratedColumn, Unique, UpdateDateColumn
 } from 'typeorm';
 
 @Entity()

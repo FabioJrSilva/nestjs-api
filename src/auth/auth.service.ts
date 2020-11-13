@@ -1,5 +1,8 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable, NotFoundException,
+  UnauthorizedException, UnprocessableEntityException
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../users/dto/create-user.dto';
