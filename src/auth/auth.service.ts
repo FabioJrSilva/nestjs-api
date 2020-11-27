@@ -5,10 +5,12 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomBytes } from 'crypto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserRole } from '../users/user-roles.enum';
 import { User } from '../users/user.entity';
 import { UserRepository } from '../users/users.repository';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { CredentialsDto } from './dto/credentials.dto';
 
 @Injectable()
@@ -57,13 +59,55 @@ export class AuthService {
     return { token };
   }
 
-  async confirmEmail(confirmationToken: string)
-    : Promise<void> {
+  async confirmEmail(confirmationToken: string): Promise<void> {
     const result = await this.userRepository.update(
       { confirmationToken },
       { confirmationToken: null }
     );
 
     if (result.affected === 0) throw new NotFoundException('Token inválido');
+  }
+
+  async sendRecoverPasswordEmail(email: string): Promise<void> {
+    const user = await this.userRepository.findOne({ email });
+
+    if (!user)
+      throw new NotFoundException('Não há usuário cadastrado com esse email.');
+
+    user.recoverToken = randomBytes(32).toString('hex');
+    await user.save();
+
+    const mail = {
+      to: user.email,
+      from: 'noreply@application.com',
+      subject: 'Recuperação de senha',
+      template: 'recover-password',
+      context: {
+        token: user.recoverToken,
+      },
+    };
+    await this.mailerService.sendMail(mail);
+  }
+
+  async changePassword(id: string, changePasswordDto: ChangePasswordDto)
+    : Promise<void> {
+    const { password, passwordConfirmation } = changePasswordDto;
+
+    if (password != passwordConfirmation)
+      throw new UnprocessableEntityException('As senhas não conferem');
+
+    await this.userRepository.changePassword(id, password);
+  }
+
+  async resetPassword(recoverToken: string, changePasswordDto: ChangePasswordDto)
+    : Promise<void> {
+    const user = await this.userRepository.findOne({ recoverToken }, { select: ['id'] });
+    if (!user) throw new NotFoundException('Token inválido.');
+
+    try {
+      await this.changePassword(user.id.toString(), changePasswordDto);
+    } catch (error) {
+      throw error;
+    }
   }
 }
