@@ -14,3 +14,4 @@ logs
 !.vscode/extensions.json
 
 .env
+subject.json
